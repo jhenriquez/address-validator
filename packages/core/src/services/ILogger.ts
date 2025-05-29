@@ -3,9 +3,9 @@
  */
 export interface ILogger {
   /** Informational event */
-  info(message: string, meta?: Record<string, any>): void;
+  info(message: string, meta?: Record<string, unknown>): void;
   /** Warning event */
-  warn(message: string, meta?: Record<string, any>): void;
+  warn(message: string, meta?: Record<string, unknown>): void;
   /** Error event */
-  error(message: string, meta?: Record<string, any>): void;
+  error(message: string, meta?: Record<string, unknown>): void;
 }

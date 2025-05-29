@@ -1,5 +1,13 @@
-import { ValidateAddressHandler, ValidateAddressRequest, ValidationStatus } from '../../src/features/ValidateAddress';
-import { ILogger, IAddressVerifier, AddressVerificationResult, IAddressCorrector, Correction } from '../../src/services';
+import {
+  ValidateAddressHandler,
+  ValidateAddressRequest,
+  ValidationStatus,
+  ILogger,
+  IAddressVerifier,
+  AddressVerificationResult,
+  IAddressCorrector,
+  Correction
+} from '../../src';
 
 describe('ValidateAddressHandler', () => {
   const mockVerifier: jest.Mocked<IAddressVerifier> = {
@@ -133,7 +141,7 @@ describe('ValidateAddressHandler', () => {
     } as AddressVerificationResult);
 
     const corrections: Correction[] = [
-      { field: 'street', from: 'Birch Ln', to: 'Birch Lane' }
+      {field: 'street', from: 'Birch Ln', to: 'Birch Lane'}
     ];
     mockCorrector.explainCorrections.mockResolvedValue(corrections);
 
