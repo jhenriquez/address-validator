@@ -8,5 +8,8 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
+  moduleNameMapper: {
+    '^@address-parser/core$': '<rootDir>/../../packages/core/src'
+  },
   testMatch: ["**/*.spec.ts"],
 };

@@ -2,15 +2,16 @@
   "name": "@address-parser/core",
   "version": "0.0.1",
   "description": "Core domain logic for the address-parser",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jest --passWithNoTests"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "packageManager": "pnpm@9.15.0",
   "devDependencies": {
     "@eslint/js": "^9.27.0",
     "@types/jest": "^29.5.14",
@@ -22,5 +23,8 @@
     "ts-jest": "^29.3.4",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.33.0"
+  },
+  "dependencies": {
+    "winston": "^3.17.0"
   }
 }

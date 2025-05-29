@@ -2,8 +2,12 @@
   "name": "address-parser",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {},
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "start": "pnpm -r run start",
+    "test": "pnpm -r run test",
+    "build": "pnpm -r run build"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"
