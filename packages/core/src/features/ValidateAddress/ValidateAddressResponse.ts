@@ -3,16 +3,22 @@
  */
 export type ValidationStatus = 'valid' | 'corrected' | 'unverifiable';
 
-/**
- * Structured result of address validation.
- */
-export interface ValidateAddressResponse {
+export interface Address {
   street: string;
   number: string;
   city: string;
   state: string;
   zip: string;
+}
+
+/**
+ * Structured result of address validation.
+ */
+export interface ValidateAddressResponse {
+  input: string;
+  correctedInput?: string;
+  formattedAddress?: string;
+  address: Address;
   status: ValidationStatus;
-  /** present when unverifiable or partially validated */
   errors?: string[];
 }

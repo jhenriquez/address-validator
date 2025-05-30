@@ -35,9 +35,8 @@ export interface CorrectionTargets {
  * Result of attempting to parse & validate a free-form address.
  */
 export interface AddressVerificationResult {
-  /** true if the service found a valid, structured address */
   isValid: boolean;
-  /** when isValid, the normalized components */
+  formattedAddress?: string;
   address?: {
     street: string;
     number: string;
@@ -45,6 +44,5 @@ export interface AddressVerificationResult {
     state: string;
     zip: string;
   };
-  /** when !isValid, human-readable error messages or failures */
   errors?: string[];
 }

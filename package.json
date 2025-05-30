@@ -6,7 +6,8 @@
   "scripts": {
     "start": "pnpm -r run start",
     "test": "pnpm -r run test",
-    "build": "pnpm -r run build"
+    "build": "pnpm -r run build",
+    "api:dev": "pnpm --filter @address-parser/api run dev"
   },
   "keywords": [],
   "author": "",

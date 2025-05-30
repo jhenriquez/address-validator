@@ -66,7 +66,7 @@ export class HFAddressCorrector implements IAddressCorrector {
   constructor() {
     this.apiUrl = process.env.CORRECTION_API_URL!;
     this.apiToken = process.env.CORRECTION_API_TOKEN!;
-    this.model = process.env.HF_CORRECTION_API_MODEL!;
+    this.model = process.env.CORRECTION_API_MODEL!;
     this.suggestPrompt = process.env.CORRECTION_SUGGEST_PROMPT!;
     this.explainPrompt = process.env.CORRECTION_EXPLAIN_PROMPT!;
 

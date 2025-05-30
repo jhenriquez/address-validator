@@ -64,7 +64,7 @@ describe('ValidateAddressHandler', () => {
     expect(mockCorrector.suggestCorrection).toHaveBeenCalledWith(input);
     expect(mockVerifier.verify).toHaveBeenCalledWith(input);
     expect(resp.status).toBe<ValidationStatus>('valid');
-    expect(resp).toMatchObject(fakeAddress);
+    expect(resp.address).toMatchObject(fakeAddress);
   });
 
   it('calls verify with the corrected input when suggestCorrection returns a suggestion', async () => {
@@ -93,7 +93,7 @@ describe('ValidateAddressHandler', () => {
     expect(mockCorrector.suggestCorrection).toHaveBeenCalledWith(input);
     expect(mockVerifier.verify).toHaveBeenCalledWith(suggestion);
     expect(resp.status).toBe<ValidationStatus>('valid');
-    expect(resp).toMatchObject(fakeAddress);
+    expect(resp.address).toMatchObject(fakeAddress);
   });
 
   it('calls explainCorrections with original input and corrected suggestion', async () => {
@@ -148,6 +148,6 @@ describe('ValidateAddressHandler', () => {
     const resp = await handler.handle(new ValidateAddressRequest(input));
 
     expect(resp.status).toBe<ValidationStatus>('corrected');
-    expect(resp).toMatchObject(fakeAddress);
+    expect(resp.address).toMatchObject(fakeAddress);
   });
 });

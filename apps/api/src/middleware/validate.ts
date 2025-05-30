@@ -1,6 +1,6 @@
 import { ZodSchema, ZodError } from 'zod';
 import { Request, Response, NextFunction } from 'express';
-import { Response as ApiResponse } from '../utils/Response';
+import { AppResponse as ApiResponse } from '../utils/AppResponse';
 
 type ValidatorConfig = {
   body?: ZodSchema;

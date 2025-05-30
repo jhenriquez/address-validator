@@ -53,6 +53,7 @@ export class CensusGeocodingAddressVerifier implements IAddressVerifier {
 
     return {
       isValid: true,
+      formattedAddress: match.matchedAddress,
       address: {
         number: comp.fromAddress,
         street: comp.streetName,

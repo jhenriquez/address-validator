@@ -6,13 +6,13 @@ import {
   IAddressCorrector, LoggerFactory,
 } from "../../services";
 import {HFAddressCorrector} from "../../services/adapters/HFAddressCorrector";
-import {CensusGeocodingAddressVerifier} from "../../services/adapters/CensusGeocodingAddressVerifier";
+import {GoogleGeocodingAddressVerifier} from "../../services/adapters/GoogleGeocodingAddressVerifier";
 
 export class ValidateAddressHandler
   implements IHandler<ValidateAddressRequest, ValidateAddressResponse> {
   constructor(
     private readonly corrector: IAddressCorrector = new HFAddressCorrector(),
-    private readonly verifier: IAddressVerifier = new CensusGeocodingAddressVerifier(),
+    private readonly verifier: IAddressVerifier = new GoogleGeocodingAddressVerifier(),
     private readonly logger: ILogger = LoggerFactory.create(),
   ) {}
 
@@ -29,7 +29,10 @@ export class ValidateAddressHandler
       this.logger.warn("ValidateAddressHandler: no input provided", {
         stage: "input-validation",
       });
-      return this.buildUnverifiableResponse(["No address provided"]);
+      return this.buildUnverifiableResponse(
+        input,
+        ['No address provided']
+      );
     }
 
     this.logger.info("ValidateAddressHandler: ai-suggestion", {
@@ -51,7 +54,7 @@ export class ValidateAddressHandler
           stage: "ai-suggestion",
         });
       }
-    } catch (err: any) {
+    } catch (err) {
       this.logger.error("ValidateAddressHandler: ai-suggestion failed", {
         stage: "ai-suggestion",
         error: err,
@@ -71,9 +74,11 @@ export class ValidateAddressHandler
         stage: "verification",
         error: err,
       });
-      return this.buildUnverifiableResponse([
-        "Verification service error",
-      ]);
+      return this.buildUnverifiableResponse(
+        input,
+        ["Verification service error"],
+        toVerify,
+      );
     }
 
     if (!verificationResult.isValid || !verificationResult.address) {
@@ -82,11 +87,13 @@ export class ValidateAddressHandler
         errors: verificationResult.errors,
       });
       return this.buildUnverifiableResponse(
-        verificationResult.errors ?? []
+        input,
+        verificationResult.errors ?? [],
+        toVerify,
       );
     }
 
-    const { address } = verificationResult;
+    const { address, formattedAddress } = verificationResult;
 
     this.logger.info("ValidateAddressHandler: explain-corrections", {
       stage: "explain-corrections",
@@ -107,8 +114,11 @@ export class ValidateAddressHandler
       });
 
       return {
-        ...address,
-        status: "valid",
+        input,
+        formattedAddress,
+        correctedInput: toVerify,
+        address,
+        status: 'valid',
       };
     }
 
@@ -116,22 +126,31 @@ export class ValidateAddressHandler
       corrections?.length > 0 ? "corrected" : "valid";
 
     return {
-      ...address,
+      input,
+      formattedAddress,
+      correctedInput: toVerify,
+      address,
       status,
     };
   }
 
   private buildUnverifiableResponse(
-    errors: string[] = []
+    input: string,
+    errors: string[] = [],
+    correctedInput: string = '',
   ): ValidateAddressResponse {
     return {
-      street: "",
-      number: "",
-      city: "",
-      state: "",
-      zip: "",
-      status: "unverifiable" as ValidationStatus,
+      input,
+      correctedInput,
       errors,
+      status: "unverifiable" as ValidationStatus,
+      address: {
+        street: "",
+        number: "",
+        city: "",
+        state: "",
+        zip: "",
+      },
     };
   }
 }
