@@ -5,6 +5,7 @@ import {IAddressVerifier} from "../IAddressVerifier";
  * Concrete verifier using the U.S. Census “one-line address” geocoder.
  */
 export class CensusGeocodingAddressVerifier implements IAddressVerifier {
+  public readonly geocoderName = 'us-census';
   private readonly baseUrl =
     'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress';
 
@@ -23,14 +24,14 @@ export class CensusGeocodingAddressVerifier implements IAddressVerifier {
       const { message } = err as Error;
       return {
         isValid: false,
-        source: 'us-census',
+        source: this.geocoderName,
         errors: [message || 'Network error'] };
     }
 
     if (!resp.ok) {
       return {
         isValid: false,
-        source: 'us-census',
+        source: this.geocoderName,
         errors: [`HTTP ${resp.status}: ${resp.statusText}`]
       };
     }
@@ -54,7 +55,7 @@ export class CensusGeocodingAddressVerifier implements IAddressVerifier {
     if (!matches || matches.length === 0) {
       return {
         isValid: false,
-        source: 'us-census',
+        source: this.geocoderName,
         errors: ['No address matches found'],
       };
     }
@@ -64,7 +65,7 @@ export class CensusGeocodingAddressVerifier implements IAddressVerifier {
 
     return {
       isValid: true,
-      source: 'US Census',
+      source: this.geocoderName,
       formattedAddress: match.matchedAddress,
       address: {
         number: comp.fromAddress,

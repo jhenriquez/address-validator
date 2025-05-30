@@ -29,6 +29,7 @@ interface AddressComponent {
 export class GoogleGeocodingAddressVerifier implements IAddressVerifier {
   private readonly baseUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
   private readonly apiKey: string;
+  public readonly geocoderName = 'google';
 
   constructor(apiKey: string = process.env.GOOGLE_GEOCODING_API_KEY!) {
     this.apiKey = apiKey;
@@ -52,13 +53,13 @@ export class GoogleGeocodingAddressVerifier implements IAddressVerifier {
       if (ae.response) {
         return {
           isValid: false,
-          source: 'google',
+          source: this.geocoderName,
           errors: [`HTTP ${ae.response.status}: ${ae.response.statusText}`],
         };
       }
       return {
         isValid: false,
-        source: 'google',
+        source: this.geocoderName,
         errors: [ae.message],
       };
     }
@@ -72,7 +73,7 @@ export class GoogleGeocodingAddressVerifier implements IAddressVerifier {
           : data.error_message || data.status;
       return {
         isValid: false,
-        source: 'google',
+        source: this.geocoderName,
         errors: [msg],
       };
     }
@@ -85,7 +86,7 @@ export class GoogleGeocodingAddressVerifier implements IAddressVerifier {
 
     return {
       isValid: true,
-      source: 'google',
+      source: this.geocoderName,
       formattedAddress: match.formatted_address,
       address: {
         number: getComp('street_number'),

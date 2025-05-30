@@ -10,4 +10,6 @@ export interface IAddressVerifier {
    * @returns a result indicating success, parsed parts, or errors
    */
   verify(freeText: string): Promise<AddressVerificationResult>;
+
+  geocoderName: string;
 }

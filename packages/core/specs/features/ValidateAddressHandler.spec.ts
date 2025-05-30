@@ -12,6 +12,7 @@ import {
 describe('ValidateAddressHandler', () => {
   const mockVerifier: jest.Mocked<IAddressVerifier> = {
     verify: jest.fn(),
+    geocoderName: 'secondTestGeocoder',
   };
   const mockCorrector: jest.Mocked<IAddressCorrector> = {
     suggestCorrection: jest.fn(),
@@ -178,6 +179,7 @@ describe('ValidateAddressHandler', () => {
     const input = '123 Main St';
     const secondMockVerifier: jest.Mocked<IAddressVerifier> = {
       verify: jest.fn(),
+      geocoderName: 'secondTestGeocoder',
     };
 
     handler = new ValidateAddressHandler(
@@ -205,6 +207,7 @@ describe('ValidateAddressHandler', () => {
     const input = '999 Invalid St';
     const secondMockVerifier: jest.Mocked<IAddressVerifier> = {
       verify: jest.fn(),
+      geocoderName: 'secondTestGeocoder',
     };
 
     handler = new ValidateAddressHandler(

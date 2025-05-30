@@ -74,15 +74,18 @@ export class ValidateAddressHandler
     for (const verifier of this.verifiers) {
       try {
         const result = await verifier.verify(toVerify);
+
         if (result.isValid && result.address) {
           verificationResult = result;
           break;
         } else {
           if (result.errors?.length) {
-            verificationErrors = [...verificationErrors, ...result.errors];
+            verificationErrors = [...verificationErrors, ...result.errors.map((err) => this.tagErrorWithSource(err, result.source))];
           }
         }
       } catch (err) {
+        const { message } = err as Error;
+        verificationErrors = [...verificationErrors, this.tagErrorWithSource(message, verifier.geocoderName)];
         this.logger.error("ValidateAddressHandler: verification attempt failed", {
           stage: "verification",
           error: err,
@@ -97,7 +100,10 @@ export class ValidateAddressHandler
       });
       return this.buildUnverifiableResponse(
         input,
-        verificationErrors.length ? verificationErrors : ["Address could not be verified by any service"],
+        [
+          ...(verificationErrors.length ? verificationErrors : []),
+          "Address could not be verified by any service",
+        ],
         toVerify,
       );
     }
@@ -129,6 +135,10 @@ export class ValidateAddressHandler
         correctedInput: toVerify,
         address,
         status: 'valid',
+        errors: [
+          ...(verificationErrors.length ? verificationErrors : []),
+          "Failed trying to explain corrections"
+        ]
       };
     }
 
@@ -142,6 +152,9 @@ export class ValidateAddressHandler
       correctedInput: toVerify,
       address,
       status,
+      errors: [
+        ...(verificationErrors.length ? verificationErrors : []),
+      ]
     };
   }
 
@@ -163,5 +176,9 @@ export class ValidateAddressHandler
         zip: "",
       },
     };
+  }
+
+  private tagErrorWithSource(error: string, source: string): string {
+    return `${source}: ${error}`;
   }
 }
