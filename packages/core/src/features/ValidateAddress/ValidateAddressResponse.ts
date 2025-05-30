@@ -20,5 +20,6 @@ export interface ValidateAddressResponse {
   formattedAddress?: string;
   address: Address;
   status: ValidationStatus;
+  geocoder?: string;
   errors?: string[];
 }

@@ -27,7 +27,7 @@ describe('ValidateAddressHandler', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    handler = new ValidateAddressHandler(mockCorrector, mockVerifier, mockLogger);
+    handler = new ValidateAddressHandler(mockCorrector, [mockVerifier], mockLogger);
   });
 
   it('resolves to unverifiable if input is not provided', async () => {
@@ -149,5 +149,83 @@ describe('ValidateAddressHandler', () => {
 
     expect(resp.status).toBe<ValidationStatus>('corrected');
     expect(resp.address).toMatchObject(fakeAddress);
+  });
+
+  async function assertVerifierExpectations(secondMockVerifier: jest.Mocked<IAddressVerifier>, fakeAddress: {
+    street: string;
+    number: string;
+    city: string;
+    state: string;
+    zip: string
+  }, input: string) {
+    secondMockVerifier.verify.mockResolvedValue({
+      isValid: true,
+      address: fakeAddress,
+    } as AddressVerificationResult);
+
+    mockCorrector.suggestCorrection.mockResolvedValue(input);
+    mockCorrector.explainCorrections.mockResolvedValue([] as Correction[]);
+
+    const resp = await handler.handle(new ValidateAddressRequest(input));
+
+    expect(mockVerifier.verify).toHaveBeenCalledWith(input);
+    expect(secondMockVerifier.verify).toHaveBeenCalledWith(input);
+    expect(resp.status).toBe<ValidationStatus>('valid');
+    expect(resp.address).toMatchObject(fakeAddress);
+  }
+
+  it('calls the second verifier if the first one rejects', async () => {
+    const input = '123 Main St';
+    const secondMockVerifier: jest.Mocked<IAddressVerifier> = {
+      verify: jest.fn(),
+    };
+
+    handler = new ValidateAddressHandler(
+      mockCorrector,
+      [mockVerifier, secondMockVerifier],
+      mockLogger
+    );
+
+
+    mockVerifier.verify.mockRejectedValue(new Error('Verification service down'));
+
+
+    const fakeAddress = {
+      street: 'Main St',
+      number: '123',
+      city: 'Springfield',
+      state: 'IL',
+      zip: '62701',
+    };
+
+    await assertVerifierExpectations(secondMockVerifier, fakeAddress, input);
+  });
+
+  it('calls the second verifier if the first one returns unverifiable or invalid', async () => {
+    const input = '999 Invalid St';
+    const secondMockVerifier: jest.Mocked<IAddressVerifier> = {
+      verify: jest.fn(),
+    };
+
+    handler = new ValidateAddressHandler(
+      mockCorrector,
+      [mockVerifier, secondMockVerifier],
+      mockLogger
+    );
+
+    mockVerifier.verify.mockResolvedValue({
+      isValid: false,
+      errors: ['Address not found'],
+    } as AddressVerificationResult);
+
+    const fakeAddress = {
+      street: 'Valid Street',
+      number: '999',
+      city: 'Validtown',
+      state: 'VS',
+      zip: '12345',
+    };
+
+    await assertVerifierExpectations(secondMockVerifier, fakeAddress, input);
   });
 });

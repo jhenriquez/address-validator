@@ -7,14 +7,16 @@ import {
 } from "../../services";
 import {HFAddressCorrector} from "../../services/adapters/HFAddressCorrector";
 import {GoogleGeocodingAddressVerifier} from "../../services/adapters/GoogleGeocodingAddressVerifier";
+import {CensusGeocodingAddressVerifier} from "../../services/adapters/CensusGeocodingAddressVerifier";
 
 export class ValidateAddressHandler
   implements IHandler<ValidateAddressRequest, ValidateAddressResponse> {
   constructor(
     private readonly corrector: IAddressCorrector = new HFAddressCorrector(),
-    private readonly verifier: IAddressVerifier = new GoogleGeocodingAddressVerifier(),
+    private readonly verifiers: IAddressVerifier[] = [new CensusGeocodingAddressVerifier(), new GoogleGeocodingAddressVerifier()],
     private readonly logger: ILogger = LoggerFactory.create(),
-  ) {}
+  ) {
+  }
 
   public async handle(
     request: ValidateAddressRequest
@@ -66,34 +68,41 @@ export class ValidateAddressHandler
       addressToVerify: toVerify,
     });
 
-    let verificationResult: AddressVerificationResult;
-    try {
-      verificationResult = await this.verifier.verify(toVerify);
-    } catch (err) {
-      this.logger.error("ValidateAddressHandler: verification failed", {
+    let verificationResult: AddressVerificationResult | null = null;
+    let verificationErrors: string[] = [];
+
+    for (const verifier of this.verifiers) {
+      try {
+        const result = await verifier.verify(toVerify);
+        if (result.isValid && result.address) {
+          verificationResult = result;
+          break;
+        } else {
+          if (result.errors?.length) {
+            verificationErrors = [...verificationErrors, ...result.errors];
+          }
+        }
+      } catch (err) {
+        this.logger.error("ValidateAddressHandler: verification attempt failed", {
+          stage: "verification",
+          error: err,
+        });
+      }
+    }
+
+    if (!verificationResult || !verificationResult.isValid || !verificationResult.address) {
+      this.logger.warn("ValidateAddressHandler: address unverifiable by any verifier", {
         stage: "verification",
-        error: err,
+        errors: verificationErrors,
       });
       return this.buildUnverifiableResponse(
         input,
-        ["Verification service error"],
+        verificationErrors.length ? verificationErrors : ["Address could not be verified by any service"],
         toVerify,
       );
     }
 
-    if (!verificationResult.isValid || !verificationResult.address) {
-      this.logger.warn("ValidateAddressHandler: address unverifiable", {
-        stage: "verification",
-        errors: verificationResult.errors,
-      });
-      return this.buildUnverifiableResponse(
-        input,
-        verificationResult.errors ?? [],
-        toVerify,
-      );
-    }
-
-    const { address, formattedAddress } = verificationResult;
+    const {address, formattedAddress, source} = verificationResult;
 
     this.logger.info("ValidateAddressHandler: explain-corrections", {
       stage: "explain-corrections",
@@ -116,6 +125,7 @@ export class ValidateAddressHandler
       return {
         input,
         formattedAddress,
+        geocoder: source,
         correctedInput: toVerify,
         address,
         status: 'valid',
@@ -128,6 +138,7 @@ export class ValidateAddressHandler
     return {
       input,
       formattedAddress,
+      geocoder: source,
       correctedInput: toVerify,
       address,
       status,

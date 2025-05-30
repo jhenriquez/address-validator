@@ -21,11 +21,18 @@ export class CensusGeocodingAddressVerifier implements IAddressVerifier {
       resp = await fetch(url);
     } catch (err) {
       const { message } = err as Error;
-      return { isValid: false, errors: [message || 'Network error'] };
+      return {
+        isValid: false,
+        source: 'us-census',
+        errors: [message || 'Network error'] };
     }
 
     if (!resp.ok) {
-      return { isValid: false, errors: [`HTTP ${resp.status}: ${resp.statusText}`] };
+      return {
+        isValid: false,
+        source: 'us-census',
+        errors: [`HTTP ${resp.status}: ${resp.statusText}`]
+      };
     }
 
     const payload = (await resp.json()) as {
@@ -45,7 +52,11 @@ export class CensusGeocodingAddressVerifier implements IAddressVerifier {
 
     const matches = payload.result?.addressMatches;
     if (!matches || matches.length === 0) {
-      return { isValid: false, errors: ['No address matches found'] };
+      return {
+        isValid: false,
+        source: 'us-census',
+        errors: ['No address matches found'],
+      };
     }
 
     const match = matches[0];
@@ -53,6 +64,7 @@ export class CensusGeocodingAddressVerifier implements IAddressVerifier {
 
     return {
       isValid: true,
+      source: 'US Census',
       formattedAddress: match.matchedAddress,
       address: {
         number: comp.fromAddress,

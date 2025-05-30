@@ -69,23 +69,13 @@ export class HFAddressCorrector implements IAddressCorrector {
     this.model = process.env.CORRECTION_API_MODEL!;
     this.suggestPrompt = process.env.CORRECTION_SUGGEST_PROMPT!;
     this.explainPrompt = process.env.CORRECTION_EXPLAIN_PROMPT!;
-
-    if (
-      !this.apiUrl ||
-      !this.apiToken ||
-      !this.model ||
-      !this.suggestPrompt ||
-      !this.explainPrompt
-    ) {
-      throw new Error(
-        'Missing one of the required CORRECTION_API_* environment variables'
-      );
-    }
   }
 
   public async suggestCorrection(
     freeText: string
   ): Promise<string | null> {
+    this.validateConfigurations();
+
     const payload = {
       model: this.model,
       messages: [
@@ -123,6 +113,8 @@ export class HFAddressCorrector implements IAddressCorrector {
     original: string,
     corrected: string
   ): Promise<Correction[]> {
+    this.validateConfigurations();
+
     const payload = {
       model: this.model,
       messages: [
@@ -173,6 +165,20 @@ export class HFAddressCorrector implements IAddressCorrector {
     } catch (err) {
       throw new Error(
         `Failed to parse corrections JSON: ${(err as Error).message}\nRaw: ${jsonArray}`
+      );
+    }
+  }
+
+  private validateConfigurations() {
+    if (
+      !this.apiUrl ||
+      !this.apiToken ||
+      !this.model ||
+      !this.suggestPrompt ||
+      !this.explainPrompt
+    ) {
+      throw new Error(
+        'Missing one of the required CORRECTION_API_* environment variables'
       );
     }
   }

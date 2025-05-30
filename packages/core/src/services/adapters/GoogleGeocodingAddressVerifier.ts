@@ -31,13 +31,14 @@ export class GoogleGeocodingAddressVerifier implements IAddressVerifier {
   private readonly apiKey: string;
 
   constructor(apiKey: string = process.env.GOOGLE_GEOCODING_API_KEY!) {
-    if (!apiKey) {
-      throw new Error('Missing required env var: GOOGLE_GEOCODING_API_KEY');
-    }
     this.apiKey = apiKey;
   }
 
   public async verify(freeText: string): Promise<AddressVerificationResult> {
+    if (!this.apiKey) {
+      throw new Error('Missing required env var: GOOGLE_GEOCODING_API_KEY');
+    }
+
     const params = {
       address: freeText,
       key: this.apiKey,
@@ -49,14 +50,15 @@ export class GoogleGeocodingAddressVerifier implements IAddressVerifier {
     } catch (err) {
       const ae = err as AxiosError;
       if (ae.response) {
-        // non-2xx status
         return {
           isValid: false,
+          source: 'google',
           errors: [`HTTP ${ae.response.status}: ${ae.response.statusText}`],
         };
       }
       return {
         isValid: false,
+        source: 'google',
         errors: [ae.message],
       };
     }
@@ -70,6 +72,7 @@ export class GoogleGeocodingAddressVerifier implements IAddressVerifier {
           : data.error_message || data.status;
       return {
         isValid: false,
+        source: 'google',
         errors: [msg],
       };
     }
@@ -82,6 +85,7 @@ export class GoogleGeocodingAddressVerifier implements IAddressVerifier {
 
     return {
       isValid: true,
+      source: 'google',
       formattedAddress: match.formatted_address,
       address: {
         number: getComp('street_number'),

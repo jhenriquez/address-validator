@@ -36,6 +36,7 @@ export interface CorrectionTargets {
  */
 export interface AddressVerificationResult {
   isValid: boolean;
+  source: string;
   formattedAddress?: string;
   address?: {
     street: string;
