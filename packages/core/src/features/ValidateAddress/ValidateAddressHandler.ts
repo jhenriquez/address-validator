@@ -1,19 +1,19 @@
-import { IHandler } from "../../types";
+import { IHandler, AddressVerificationResult, Correction } from "../../types";
 import { ValidateAddressResponse, ValidationStatus, ValidateAddressRequest } from "./";
 import {
   ILogger,
   IAddressVerifier,
-  AddressVerificationResult,
-  IAddressCorrector,
-  Correction
+  IAddressCorrector, LoggerFactory,
 } from "../../services";
+import {HFAddressCorrector} from "../../services/adapters/HFAddressCorrector";
+import {CensusGeocodingAddressVerifier} from "../../services/adapters/CensusGeocodingAddressVerifier";
 
 export class ValidateAddressHandler
   implements IHandler<ValidateAddressRequest, ValidateAddressResponse> {
   constructor(
-    private readonly corrector: IAddressCorrector,
-    private readonly verifier: IAddressVerifier,
-    private readonly logger: ILogger,
+    private readonly corrector: IAddressCorrector = new HFAddressCorrector(),
+    private readonly verifier: IAddressVerifier = new CensusGeocodingAddressVerifier(),
+    private readonly logger: ILogger = LoggerFactory.create(),
   ) {}
 
   public async handle(
