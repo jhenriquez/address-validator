@@ -1,5 +1,5 @@
 {
-  "name": "address-parser",
+  "name": "address-validator",
   "version": "1.0.0",
   "description": "",
   "packageManager": "pnpm@9.15.0",
@@ -7,7 +7,7 @@
     "start": "pnpm -r run start",
     "test": "pnpm -r run test",
     "build": "pnpm -r run build",
-    "api:dev": "pnpm --filter @address-parser/api run dev"
+    "api:dev": "pnpm --filter @address-validator/api run dev"
   },
   "keywords": [],
   "author": "",

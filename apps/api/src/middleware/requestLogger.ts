@@ -1,4 +1,4 @@
-import {LoggerFactory} from "@address-parser/core";
+import {LoggerFactory} from "@address-validator/core";
 import { v4 } from 'uuid';
 import {RequestHandler} from "express";
 

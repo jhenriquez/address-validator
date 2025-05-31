@@ -1,7 +1,7 @@
 {
-  "name": "@address-parser/core",
+  "name": "@address-validator/core",
   "version": "0.0.1",
-  "description": "Core domain logic for the address-parser",
+  "description": "Core logic for the address-validator",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {

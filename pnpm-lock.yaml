@@ -10,7 +10,7 @@ importers:
 
   apps/api:
     dependencies:
-      '@address-parser/core':
+      '@address-validator/core':
         specifier: workspace:*
         version: link:../../packages/core
       express:

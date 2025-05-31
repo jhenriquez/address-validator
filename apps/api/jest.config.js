@@ -9,7 +9,7 @@ module.exports = {
     ...tsJestTransformCfg,
   },
   moduleNameMapper: {
-    '^@address-parser/core$': '<rootDir>/../../packages/core/src'
+    '^@address-validator/core$': '<rootDir>/../../packages/core/src'
   },
   testMatch: ["**/*.spec.ts"],
 };

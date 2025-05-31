@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
-import { ValidateAddressHandler, ValidateAddressRequest } from '@address-parser/core';
+import { ValidateAddressHandler, ValidateAddressRequest } from '@address-validator/core';
 import { validate } from '../middleware/validate';
 import { AppResponse } from '../utils';
 import asyncHandler from "../utils/asyncHandler";

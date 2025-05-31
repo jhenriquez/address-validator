@@ -1,4 +1,4 @@
-import {LoggerFactory} from "@address-parser/core";
+import {LoggerFactory} from "@address-validator/core";
 
 const logger = LoggerFactory.create({ app: 'api', component: 'server' });
 

@@ -1,15 +1,9 @@
-# Address Parser
+# Address Validator
 
 An API to validate and standardize free-form US property addresses.  
 Built as a TypeScript pnpm monorepo with an Express HTTP service and pluggable AI- and API-driven adapters.
 
 ---
-
-## Repository
-
-```bash
-git clone https://github.com/jhenriquez/address-parser.git
-```
 
 ## Overview
 
@@ -28,10 +22,9 @@ git clone https://github.com/jhenriquez/address-parser.git
 #### 3. Error-Resilient & Observable
 
 - Structured JSON logging via a minimal ILogger abstraction.
-
 - Input validation with Zod and centralized error handling middleware.
-
 - Statuses: valid, corrected, unverifiable drive clear API responses.
+- Redundant address verification, validates first with the free US Census API and fallback to Google Geocoding API.
 
 #### 4. Trade-Offs
 
@@ -116,11 +109,11 @@ The AI model and API configuration is controlled through environment variables, 
 ### Clone & Install
 
 ```bash
-git clone https://github.com/jhenriquez/address-parser.git
+git clone https://github.com/jhenriquez/address-validator.git
 ```
 
 ```bash
-cd address-parser
+cd address-validator
 ```
 
 ```bash
@@ -194,13 +187,13 @@ Content-Type: application/json
 ```
 
 ## Further Improvements
-Batch Processing: Accept multiple addresses in one request.
+Caching: Memoize API results to reduce cost and latency.
 
-Caching: Memoize Google API results to reduce cost and latency.
-
-Rate-Limiting & Retry Logic: Harden against third-party throttling.
+Rate-Limiting: Prevent abuse by IP and similar mechanisms 
 
 International Support: Swap adapters for non-US geocoding services.
+
+Geocoder selection: Allow clients to specify one or more geocoder to use.
 
 ----- 
 Thank you for reviewing! Feel free to raise issues or PRs in the repository.
