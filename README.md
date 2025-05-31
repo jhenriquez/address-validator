@@ -121,9 +121,10 @@ pnpm install
 ```
 
 ### Environment
-Create a .env at the repo root with:
+Create a .env at the root of the `api` app module:
 
 ```text
+# apps/api/.env
 CORRECTION_API_URL=https://router.huggingface.co/novita/v3/openai/chat/completions
 CORRECTION_API_TOKEN=<huggingface-token>
 CORRECTION_API_MODEL=deepseek/deepseek-v3-0324
