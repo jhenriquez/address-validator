@@ -7,6 +7,7 @@
     "start": "pnpm -r run start",
     "test": "pnpm -r run test",
     "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
     "api:dev": "pnpm --filter @address-validator/api run dev"
   },
   "keywords": [],
