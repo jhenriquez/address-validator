@@ -157,7 +157,7 @@ pnpm build
 pnpm test
 ```
 
-## Example Request & Response
+## Example Requests & Responses
 ### Request
 
 ```text
@@ -171,20 +171,57 @@ Content-Type: application/json
 
 ```json
 {
+  "value": {
     "input": "1600 Amphitheatre Pkwy, Mountain View, CA",
-    "correctedInput": "1600 Amphitheatre Parkway, Mountain View, CA 94043",
-    "formattedAddress": "1600 Amphitheatre Parkway, Mountain View, CA 94043, USA",
+    "formattedAddress": "1600 AMPHITHEATRE PKWY, MOUNTAIN VIEW, CA, 94043",
+    "geocoder": "us-census",
+    "correctedInput": "1600 Amphitheatre Pkwy, Mountain View, CA",
     "address": {
-        "street": "Amphitheatre Parkway",
-        "number": "1600",
-        "city": "Mountain View",
-        "state": "CA",
-        "zip": "94043"
+      "number": "1500",
+      "street": "AMPHITHEATRE",
+      "city": "MOUNTAIN VIEW",
+      "state": "CA",
+      "zip": "94043"
     },
-    "status": "corrected",
+    "status": "valid",
+    "errors": []
+  },
+  "errors": []
+}
+```
+
+### Request
+
+```text
+POST /api/v1/address/validate
+Content-Type: application/json
+
+{ "address": "W 246 Rd BX Nuevayol" }
+```
+
+```json
+{
+    "value": {
+        "input": "W 246 Rd BX Nuevayol",
+        "formattedAddress": "W 246th St, Bronx, NY 10471, USA",
+        "geocoder": "google",
+        "correctedInput": "W 246 Rd, Bronx, NY",
+        "address": {
+            "number": "",
+            "street": "West 246th Street",
+            "city": "The Bronx",
+            "state": "New York",
+            "zip": "10471"
+        },
+        "status": "corrected",
+        "errors": [
+            "us-census: No address matches found"
+        ]
+    },
     "errors": []
 }
 ```
+Notice in the above result how us-census failed to identify the result and the final successful response came from google.
 
 ## Further Improvements
 Caching: Memoize API results to reduce cost and latency.
